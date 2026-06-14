@@ -1,1 +1,4 @@
 .env
+conversations.json
+__pycache__/
+*.pyc
