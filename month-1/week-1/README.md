@@ -1,47 +1,38 @@
-# Week 1 - LLM Fundamentals
-
-## Goal
-Build first chatbot with memory 
-using Groq API
-
-## Status
-In progress
-
-## What I'm learning
-- Groq API calls in Python
-- Conversation history management
-- System prompts
-
-# Recruitment Assistant Chatbot
+# Week 1 - Recruitment Assistant Chatbot
 
 ## What It Does
-A CLI chatbot that acts as a recruitment 
-assistant with full conversation memory.
+CLI-based recruitment assistant chatbot 
+with persistent conversation memory.
 
 ## Business Problem
-Recruiters answer the same candidate 
-questions repeatedly. This automates 
-basic candidate Q&A.
+Recruitment agencies receive repetitive 
+candidate inquiries. This chatbot handles 
+basic Q&A automatically and remembers 
+context across sessions.
 
-## What I Built
-- Direct Groq API calls in raw Python
-- Conversation history management
-- System prompt defining assistant personality
-- Secure API key handling with dotenv
+## Features
+- Persistent conversation history via JSON
+- Error handling for API failures
+- Clear command to reset conversation
+- Graceful exit saving conversation
+- Temperature and token controls
 
 ## What I Learned
-- How LLM APIs work underneath
-- Conversation history as a list of messages
-- Environment variables for security
-- Git workflow — add, commit, push
-- Real debugging — NameError, KeyError, 
-  branch protection rules
+- Raw Groq API calls in Python
+- JSON file reading and writing
+- Error handling with try/except
+- Environment variables with dotenv
+- Git workflow — real debugging experience
 
 ## How To Run
 1. Clone repository
-2. Create .env file with GROQ_API_KEY
+2. Create .env with GROQ_API_KEY=your_key
 3. pip install requests python-dotenv
 4. python3 chatbot.py
 
-## Tech Used
-Python | Groq API | python-dotenv
+## Tech Stack
+Python | Groq API | JSON | python-dotenv
+
+## Status
+Complete — Week 1 foundation done
+Next: Week 2 Job Description Generator
