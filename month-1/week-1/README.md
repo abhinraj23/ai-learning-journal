@@ -22,7 +22,7 @@ context across sessions.
 - JSON file reading and writing
 - Error handling with try/except
 - Environment variables with dotenv
-- Git workflow — real debugging experience
+- Git workflow - real debugging experience
 
 ## How To Run
 1. Clone repository
@@ -34,5 +34,5 @@ context across sessions.
 Python | Groq API | JSON | python-dotenv
 
 ## Status
-Complete — Week 1 foundation done
+Complete - Week 1 foundation done
 Next: Week 2 Job Description Generator
