@@ -49,7 +49,7 @@ def extract_resume_data(resume:str)->str:
 @tool
 def search_additional_info(resume_text: str)-> str:
     """
-    searches the web for additional public information about a job candidate,such as linkedIn and Github profiles.
+    searches the web for additional public information about a job candidate on Github profile and verify linkedin profile if provided.
     Only use this if there is a Linkedlin URL or Github URL or both in the resume content after extraction to find supplimentary context.
     Results may be limited or empty for some candidates without a proper online presence,
     it is normal and expected.
@@ -57,57 +57,61 @@ def search_additional_info(resume_text: str)-> str:
     input should be the entire extracted resume content
     """
     import re
+
+    results=[]
+
     #extract linkedin
     linkedin=re.search(r'linkedin\.com/in/[^\s]+',resume_text,re.IGNORECASE)
 
     #extract github
-    github=re.search(r'github\.com/in/[^\s]+',resume_text,re.IGNORECASE)
-
-    if linkedin and github:
-        query=f'"{linkedin.group()}" OR "{github.group()}"'
-
-    elif linkedin:
-        query=f'"{linkedin.group()}"'
-
-    elif github:
-        query=f'"{github.group()}"'
-
-    else:
-        return "no linkedin or github account found in the resume"
+    github=re.search(r'github\.com/[^\s]+',resume_text,re.IGNORECASE)
     
-
-    time.sleep(2)
-
-    response=requests.get("https://serpapi.com/search",params={"q":query,"api_key":SERPAPI_KEY,"num":3})
-
-    if response.status_code != 200:
-        return "Search unavailable right now,proceed only with resume content"
+    #linkedin verification
+    if linkedin:
+        results.append(f"LinkedIn profile found : {linkedin.group()}")
     
-    data=response.json()
+    #github analysis
+    if github:
+        url=github.group()
+        username=url.split("/")[-1]
 
-    if "organic_results" not in data:
-        return "No additional information found online,its normal and proceed only with resume content"
+        try:
 
-    if "organic_results" in data:
-        for i, result in enumerate(data["organic_results"]):
-            print(f"\n--- Result {i+1} ---")
-            print("Title:", result.get("title", "No title"))
-            print("Link:", result.get("link", "No link"))
-    else:
-        print("No results found")
+            #Github profile
+            profile=requests.get(f"https://api.github.com/users/{username}").json()
 
-    snippets=[]
-    for result in data["organic_results"][:3]:
-        title=result.get("title","")
-        link=result.get("link","")
-        snippet=result.get("snippet","")[:200]
-        if snippet:
-            snippets.append(f"{title} ({link}): {snippet}")
-    
-    if not snippets:
-        return "No useful information found,this is normal,proceed only with resume content"
-    
-    return "\n".join(snippets)
+            #Repositories
+            repos=requests.get(f"https://api.github.com/users/{username}/repos").json()
+
+            repo_names=[]
+
+            if isinstance(repos,list):
+                for repo in repos[:5]:
+                    repo_names.append(repo.get("name",""))
+            
+            results.append(f"""
+            Github profile found
+            
+            Username: {profile.get("login",'N/A')}
+            Name: {profile.get("name","N/A")}
+            Bio: {profile.get("bio","N/A")}
+            Public Repos: {profile.get("public_repos",0)}
+            Followers: {profile.get("followers",0)}
+
+            Top repositories:
+            {",".join(repo_names) if repo_names else "None"}
+
+            """)
+        
+        except Exception as e:
+            print("Error ",e)
+            results.append(f"Github analysis is failed: {str(e)}")
+
+    if not results:
+        return "No github or linkedin profile found"
+
+    print(results)
+    return "\n\n".join(results)
 
 tools=[extract_resume_data,search_additional_info]
 
@@ -133,9 +137,22 @@ Do NOT invent, assume, or fabricate any skills, experience,
 years, companies, or background information that was not
 explicitly written in the provided resume text.
 
+MUST: If years of experience are not explicitly stated,
+respond with "Experience not specified".
+Do not assume 0 years.
+Do not assume 1 year.
+
 If a Linkedin URL or Github URL is present inside the resume content:
 -call the search_additional_info tool by passing ENTIRE resume text
 -use any returned info to strengthen the assessment
+
+Do not infer professional reputation, network strength,
+or employability from GitHub follower count, stars,
+or other social metrics.
+
+Treat personal projects and public repositories as
+evidence of practical technical skills, especially for
+students and early-career candidates.
 
 Your job is to assess how well a candidate fits given job requirements,based primarily on given resume content and additional web information is supplimentary enrichment.No assumptions or invention.
 
