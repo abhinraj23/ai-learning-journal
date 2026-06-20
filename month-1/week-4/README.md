@@ -1,4 +1,4 @@
-# Week 4 — Candidate Research Agent
+# Week 4 - Candidate Research Agent
 
 ## What It Does
 An AI agent that researches job candidates by extracting 
@@ -80,5 +80,5 @@ SerpAPI | Regex
 Complete and verified with real data
 
 ## Next
-Week 5 — LangGraph, rebuilding this agent with explicit 
+Week 5 - LangGraph, rebuilding this agent with explicit 
 state management and decision nodes
