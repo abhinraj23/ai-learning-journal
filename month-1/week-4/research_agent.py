@@ -3,7 +3,6 @@ import requests
 from dotenv import load_dotenv
 import time
 
-from langchain_classic import hub
 from langchain_groq import ChatGroq
 from langchain.tools import tool
 from langchain.agents import create_agent
@@ -73,12 +72,15 @@ def search_additional_info(resume_text: str)-> str:
     #github analysis
     if github:
         url=github.group()
-        username=url.split("/")[-1]
+        username=url.rstrip("/").split("/")[-1]
 
         try:
 
             #Github profile
             profile=requests.get(f"https://api.github.com/users/{username}").json()
+
+            if profile.get("message")=="Not Found":
+                return "Github profile not found"
 
             #Repositories
             repos=requests.get(f"https://api.github.com/users/{username}/repos").json()
