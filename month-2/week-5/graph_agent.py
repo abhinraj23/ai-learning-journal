@@ -28,8 +28,7 @@ def extract_node(state: AgentState)-> dict:
     resume=state["resume_text"]
 
     if not resume or resume.strip()=="" or resume.strip().upper()=="N/A":
-        state["extracted_info"]="Insufficient info provided"
-        return state
+        return {"extracted_info":"Insufficient info provided"}
     prompt=f"""Extract the following from the provided resume text delimited by angle brackets:
     -Skills
     -Years of experience
@@ -83,7 +82,7 @@ def github_node(state: AgentState)-> dict:
      
 
 
-def linkedin_node(state: AgentState)-> AgentState:
+def linkedin_node(state: AgentState)-> dict:
     resume=state["resume_text"]
 
     check=re.search(r'linkedin\.com/in/([^\s/]+)',resume,re.IGNORECASE)
